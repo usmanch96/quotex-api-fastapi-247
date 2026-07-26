@@ -163,6 +163,22 @@ Retrieves historical M1 candle records for a symbol in chronological order (olde
 
 ---
 
+## 🛠️ Maintenance & Database Purging Tool
+
+Includes an interactive CLI tool (`delete_asset.py`) allowing you to selectively delete candle history for specific asset pairs or clear the entire database.
+
+```bash
+python delete_asset.py
+```
+
+### Interactive Console Features:
+- Lists all asset pairs currently stored in `qxbroker.db` with exact candle counts.
+- Enter a pair number (e.g. `1`, `2`) or symbol name (`EURUSD_otc`) to purge candles for a single asset.
+- Type `ALL` to purge the complete database.
+- Confirms before executing deletions to prevent accidental data loss.
+
+---
+
 ## 🔍 GitHub SEO & Search Keywords
 
 `quotex api` · `quotex otc api` · `quotex python wrapper` · `quotex websocket bot` · `binary options api` · `quotex signal bot` · `fastapi quotex` · `quotex payouts api` · `quotex history candles` · `quotex auto trading`
