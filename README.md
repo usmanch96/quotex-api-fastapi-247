@@ -163,3 +163,8 @@ Retrieves historical M1 candle records for a symbol in chronological order (olde
 
 For sales inquiries, custom feature additions, or integration help, message directly on Telegram:  
 👉 **[@usmanch069](https://t.me/usmanch069)**
+
+---
+
+## ⚠️ Disclaimer
+This software is provided for educational and personal use only. Trading financial instruments carries significant risk of loss. The authors are not responsible for any financial losses incurred through the use of this software. Always test on a demo account before using with live funds.
