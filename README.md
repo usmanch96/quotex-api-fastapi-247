@@ -3,10 +3,10 @@
 > **Enterprise-grade, 24/7 self-healing REST API & WebSocket wrapper for Quotex (Real & OTC asset pairs).**  
 > Designed to stream real-time price feeds, record 8-day M1 candle histories, and power automated binary options trading bots and signal generators.
 
-[![Telegram](https://img.shields.io/badge/Contact_Developer-Telegram-blue?style=for-the-badge&logo=telegram)](https://t.me/usmanch069)
-[![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
-[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
-[![License](https://img.shields.io/badge/License-Commercial_Source_Code-emerald?style=for-the-badge)](#-commercial-license--purchase-source-code)
+![Telegram](https://img.shields.io/badge/Contact_Developer-Telegram-blue?style=for-the-badge&logo=telegram)  
+![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)  
+![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)  
+![License](https://img.shields.io/badge/License-Commercial_Source_Code-emerald?style=for-the-badge)
 
 ---
 
@@ -15,6 +15,7 @@
 Looking for the full, production-ready source code with complete rights and 1-on-1 developer support?
 
 ### What’s Included in the Full Package:
+
 - 📦 **100% Full Unlocked Source Code** (`app.py`, `worker.py`, `database.py`, `pyquotex/` engine).
 - 🚀 **1-Click Automated Windows Launcher** (`start_api.bat`).
 - ⚡ **Unlimited Personal & Commercial License** (Deploy on unlimited VPS/servers).
@@ -22,7 +23,7 @@ Looking for the full, production-ready source code with complete rights and 1-on
 - 🔄 **Lifetime Code Updates & Bug Fixes**.
 
 📩 **Contact on Telegram to Buy**: [@usmanch069](https://t.me/usmanch069)  
-💳 **Accepted Payment Methods**: USDT (TRC20), Binance Pay, Crypto, PayPal, Payeer.
+💳 **Accepted Payment Methods**: USDT (TRC20), Binance Pay, Crypto.
 
 ---
 
@@ -61,35 +62,42 @@ api/
 ## ⚙️ Quick Start Guide
 
 ### 1. Prerequisites
+
 - **Python 3.10+** (Ensure `Add Python to PATH` is enabled).
 - **Google Chrome Browser** installed on your system.
 
 ### 2. Configuration
+
 Copy `.env.example` to `.env` and configure your Quotex login details:
+
 ```ini
 email=your_quotex_email@gmail.com
 password=your_quotex_password
 ```
 
 ### 3. Launching the API
-Double-click **`start_api.bat`** (or run `python -m uvicorn app:app --port 8000`).
+
+Double-click `**start_api.bat**` (or run `python -m uvicorn app:app --port 8000`).
 
 ---
 
 ## 🌐 API Endpoint Documentation & Examples
 
 ### 1. Web Portal Dashboard
+
 - **Full Request URL**: `http://127.0.0.1:8000/`
 - **Description**: Open in any web browser for interactive API querying and database candle statistics.
 
 ---
 
 ### 2. Get Live Payouts & Market Status
+
 Returns all open/closed OTC and Real assets along with live payout rates.
 
 - **Endpoint**: `/api/v1/markets`
 - **Full Example Request**: `GET http://127.0.0.1:8000/api/v1/markets`
 - **Response Format**:
+
 ```json
 {
   "timezone": "UTC+6",
@@ -114,6 +122,7 @@ Returns all open/closed OTC and Real assets along with live payout rates.
 ---
 
 ### 3. Get M1 Candles History
+
 Retrieves historical M1 candle records for a symbol in chronological order (oldest first).
 
 - **Endpoint**: `/api/v1/candles`
@@ -122,6 +131,7 @@ Retrieves historical M1 candle records for a symbol in chronological order (olde
   - `symbol` (string, required): Asset pair name (e.g. `EURUSD_otc`, `BTCUSD_otc`).
   - `limit` (integer, optional): Maximum candles to retrieve (default: `1000`, max: `11520`).
 - **Response Format**:
+
 ```json
 {
   "symbol": "EURUSD_otc",
@@ -167,4 +177,5 @@ For sales inquiries, custom feature additions, or integration help, message dire
 ---
 
 ## ⚠️ Disclaimer
+
 This software is provided for educational and personal use only. Trading financial instruments carries significant risk of loss. The authors are not responsible for any financial losses incurred through the use of this software. Always test on a demo account before using with live funds.
