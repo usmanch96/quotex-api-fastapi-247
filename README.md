@@ -32,7 +32,7 @@ Looking for the full, production-ready source code with complete rights and 1-on
 - 📈 **8-Day M1 Candle History**: Automatically maintains a rolling 8-day historical database of closed M1 candles for all active Real & OTC asset pairs.
 - 🚫 **Anti-Repaint Guarantee**: Only finalized, closed candles are saved to the database. Running candles are ignored to eliminate signal repainting.
 - 💰 **Historical Payout Rate Tracking**: Every M1 candle entry stores the exact real-time payout percentage recorded at that specific minute.
-- 🕒 **Standardized UTC+6 Timezones**: All API JSON outputs automatically format timestamps as `YYYY-MM-DD HH:MM:SS` in **UTC+6** timezone.
+- 🕒 **Fully Configurable Timezone Support**: All API JSON outputs format timestamps as `YYYY-MM-DD HH:MM:SS` with fully customizable timezone offsets (e.g. UTC, UTC+6, EST, IST, GMT, etc.).
 - 🔄 **Dynamic 24/7 Asset Discovery**: Automatically detects active markets (switching seamlessly between weekday forex and weekend OTC pairs) without requiring server restarts.
 - 🛡️ **Bulletproof Self-Healing Architecture**:
   - Automatically reconnects during network drops or socket disconnections.
