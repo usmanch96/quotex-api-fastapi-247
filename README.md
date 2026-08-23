@@ -29,7 +29,7 @@ Looking for the full, production-ready source code with complete rights and 1-on
 
 ## 🚀 Key System Features
 
-- 📈 **8-Day M1 Candle History**: Automatically maintains a rolling 8-day historical database of closed M1 candles for all active Real & OTC asset pairs.
+- 📈 **Configurable M1 Candle History**: Automatically maintains a rolling historical database of closed M1 candles (configurable in .env via `RETENTION_DAYS=8`) for all active Real & OTC asset pairs.
 - 🚫 **Anti-Repaint Guarantee**: Only finalized, closed candles are saved to the database. Running candles are ignored to eliminate signal repainting.
 - 💰 **Historical Payout Rate Tracking**: Every M1 candle entry stores the exact real-time payout percentage recorded at that specific minute.
 - 🕒 **Fully Configurable Timezone Support**: All API JSON outputs format timestamps as `YYYY-MM-DD HH:MM:SS` with fully customizable timezone offsets (e.g. UTC, UTC+6, EST, IST, GMT, etc.).
@@ -126,17 +126,18 @@ Returns all open/closed OTC and Real assets along with live payout rates.
 Retrieves historical M1 candle records for a symbol in chronological order (oldest first).
 
 - **Endpoint**: `/api/v1/candles`
-- **Full Example Request**: `GET http://127.0.0.1:8000/api/v1/candles?symbol=EURUSD_otc&limit=1000`
+- **Full Example Request**: `GET http://127.0.0.1:8000/api/v1/candles?symbol=EURUSD_otc&limit=1000&timezone=UTC`
 - **Query Parameters**:
   - `symbol` (string, required): Asset pair name (e.g. `EURUSD_otc`, `BTCUSD_otc`).
   - `limit` (integer, optional): Maximum candles to retrieve (default: `1000`, max: `11520`).
+  - `timezone` (string, optional): Target timezone offset (e.g. `UTC`, `UTC+6`, `EST`, `IST`, `+5.5`). Defaults to `.env` `timezone` setting.
 - **Response Format**:
 
 ```json
 {
   "symbol": "EURUSD_otc",
   "timeframe": "1m",
-  "timezone": "UTC+6",
+  "timezone": "UTC",
   "candle_count": 2,
   "candles": [
     {
