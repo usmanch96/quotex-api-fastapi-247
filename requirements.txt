@@ -3,3 +3,5 @@ uvicorn
 python-dotenv
 websockets
 playwright
+curl_cffi
+

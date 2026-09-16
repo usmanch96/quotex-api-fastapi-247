@@ -30,11 +30,15 @@ Looking for the full, production-ready source code with complete rights and 1-on
 ## 🚀 Key System Features
 
 - 📈 **Configurable M1 Candle History**: Automatically maintains a rolling historical database of closed M1 candles (configurable in .env via `RETENTION_DAYS=8`) for all active Real & OTC asset pairs.
-- 🚫 **Anti-Repaint Guarantee**: Only finalized, closed candles are saved to the database. Running candles are ignored to eliminate signal repainting.
+- ⚡ **Real-Time Sub-Second Ticks & Live Moving Candle**: Continuous tick processing tracking the active unclosed minute candle (Open, High, Low, Close, Volume) in real-time.
+- 🎯 **Instant Trade Execution Engine**: Place trades directly via simple 1-click URLs (`GET`), JSON payloads (`POST`), or automated TradingView alerts (`/webhook`).
+- ⏱️ **Flexible Expiry Modes**: Full support for both `TIME` mode (clock-based expiration on all pairs) and `TIMER` mode (countdown timers on OTC pairs).
+- 🚫 **Anti-Repaint Guarantee**: Only finalized, closed candles are saved to the database. Running candles update live in memory to eliminate signal repainting.
 - 💰 **Historical Payout Rate Tracking**: Every M1 candle entry stores the exact real-time payout percentage recorded at that specific minute.
 - 🕒 **Fully Configurable Timezone Support**: All API JSON outputs format timestamps as `YYYY-MM-DD HH:MM:SS` with fully customizable timezone offsets (e.g. UTC, UTC+6, EST, IST, GMT, etc.).
 - 🔄 **Dynamic 24/7 Asset Discovery**: Automatically detects active markets (switching seamlessly between weekday forex and weekend OTC pairs) without requiring server restarts.
 - 🛡️ **Bulletproof Self-Healing Architecture**:
+  - Replicates Google Chrome TLS fingerprints (`curl_cffi` Chrome 120) to bypass Cloudflare WAF anti-bot blocks on `ws2.qxbroker.com`.
   - Automatically reconnects during network drops or socket disconnections.
   - Automatically clears corrupted cookies and re-authenticates fresh.
   - Automatically detects offline downtime gaps and backfills missing candles in the background.
@@ -54,6 +58,7 @@ api/
 ├── start_api.bat      # 1-Click Windows Production Launcher
 ├── requirements.txt   # Python Dependencies
 ├── .env.example       # Environment Configuration Template
+├── BUYER_GUIDE.txt    # Step-by-Step Customer Setup Guide
 └── README.md          # System Documentation
 ```
 
@@ -73,6 +78,8 @@ Copy `.env.example` to `.env` and configure your Quotex login details:
 ```ini
 email=your_quotex_email@gmail.com
 password=your_quotex_password
+timezone=UTC
+RETENTION_DAYS=8
 ```
 
 ### 3. Launching the API
@@ -100,7 +107,7 @@ Returns all open/closed OTC and Real assets along with live payout rates.
 
 ```json
 {
-  "timezone": "UTC+6",
+  "timezone": "UTC",
   "total_assets": 2,
   "data": [
     {
@@ -121,9 +128,9 @@ Returns all open/closed OTC and Real assets along with live payout rates.
 
 ---
 
-### 3. Get M1 Candles History
+### 3. Get M1 Candles History + Live Moving Candle
 
-Retrieves historical M1 candle records for a symbol in chronological order (oldest first).
+Retrieves historical M1 candle records for a symbol in chronological order (oldest first). Automatically attaches the current active moving candle at the end.
 
 - **Endpoint**: `/api/v1/candles`
 - **Full Example Request**: `GET http://127.0.0.1:8000/api/v1/candles?symbol=EURUSD_otc&limit=1000&timezone=UTC`
@@ -131,6 +138,7 @@ Retrieves historical M1 candle records for a symbol in chronological order (olde
   - `symbol` (string, required): Asset pair name (e.g. `EURUSD_otc`, `BTCUSD_otc`).
   - `limit` (integer, optional): Maximum candles to retrieve (default: `1000`, max: `11520`).
   - `timezone` (string, optional): Target timezone offset (e.g. `UTC`, `UTC+6`, `EST`, `IST`, `+5.5`). Defaults to `.env` `timezone` setting.
+  - `include_running` (bool, optional): Automatically attaches the active live moving candle at the end (default: `true`).
 - **Response Format**:
 
 ```json
@@ -141,26 +149,134 @@ Retrieves historical M1 candle records for a symbol in chronological order (olde
   "candle_count": 2,
   "candles": [
     {
-      "time": "2026-07-26 19:40:20",
+      "time": "2026-09-16 14:19:00",
       "open": 1.09245,
-      "high": 1.0926,
-      "low": 1.0924,
+      "high": 1.09260,
+      "low": 1.09240,
       "close": 1.09255,
       "volume": 42,
       "payout": 92
     },
     {
-      "time": "2026-07-26 19:41:20",
+      "time": "2026-09-16 14:20:00",
       "open": 1.09255,
-      "high": 1.0928,
-      "low": 1.0925,
+      "high": 1.09280,
+      "low": 1.09250,
       "close": 1.09275,
       "volume": 58,
-      "payout": 92
+      "payout": 92,
+      "is_running": true
     }
   ]
 }
 ```
+
+---
+
+### 4. Get Real-Time Live Candle & Tick Data
+
+Returns the real-time sub-second price and unclosed minute candle. Ideal for real-time tickers and live chart polling.
+
+- **Endpoint**: `/api/v1/live`
+- **Full Example Request**: `GET http://127.0.0.1:8000/api/v1/live?symbol=EURUSD_otc&timezone=UTC`
+- **Response Format**:
+
+```json
+{
+  "symbol": "EURUSD_otc",
+  "timezone": "UTC",
+  "status": "live",
+  "running_candle": {
+    "time": "2026-09-16 14:20:00",
+    "open": 1.09255,
+    "high": 1.09280,
+    "low": 1.09250,
+    "close": 1.09275,
+    "volume": 58,
+    "payout": 92,
+    "is_running": true
+  }
+}
+```
+
+---
+
+### 5. Place Trade (URL / GET Request)
+
+Places a trade directly from a simple URL or GET request. Ideal for browser bookmarks, webhooks, and 1-click links.
+
+- **Endpoint**: `/api/v1/trade`
+- **Example Request**: `GET http://127.0.0.1:8000/api/v1/trade?symbol=EURUSD_otc&action=call&amount=1&duration=60&time_mode=TIMER&account_type=PRACTICE`
+- **Parameters**:
+  - `symbol` (string, required): Asset name (e.g. `EURUSD_otc`, `EURUSD`).
+  - `action` (string, required): `call` (UP) or `put` (DOWN).
+  - `amount` (float, optional): Stake amount in $ (default: `1.0`).
+  - `duration` (integer, optional): Expiry in seconds (e.g. `5`, `30`, `60`, `300`). Default: `60`.
+  - `time_mode` (string, optional): `TIME` (clock expiration on all pairs) or `TIMER` (countdown timer on OTC pairs). Default: `TIME`.
+  - `account_type` (string, optional): `PRACTICE` (Demo) or `REAL`. Default: `PRACTICE`.
+
+---
+
+### 6. Place Trade (JSON / POST Request)
+
+Places a trade using a JSON payload. Ideal for Python bots, cURL, and automated systems.
+
+- **Endpoint**: `/api/v1/trade`
+- **Method**: `POST`
+- **Payload Example**:
+```json
+{
+  "symbol": "EURUSD_otc",
+  "action": "call",
+  "amount": 1.0,
+  "duration": 60,
+  "time_mode": "TIMER",
+  "account_type": "PRACTICE"
+}
+```
+
+- **Response Format**:
+```json
+{
+  "status": "success",
+  "symbol": "EURUSD_otc",
+  "action": "CALL",
+  "amount": 1.0,
+  "duration": 60,
+  "time_mode": "TIMER",
+  "account_type": "PRACTICE",
+  "order_id": 182749102,
+  "open_price": 1.09255
+}
+```
+
+---
+
+### 7. TradingView Webhook Auto-Trader
+
+Universal webhook receiver for TradingView Pine Script alerts.
+
+- **Endpoint**: `/webhook`
+- **Method**: `POST`
+- **TradingView Alert Message**:
+```json
+{
+  "symbol": "{{ticker}}",
+  "action": "call",
+  "amount": 1.0,
+  "duration": 60,
+  "time_mode": "TIME",
+  "account_type": "PRACTICE"
+}
+```
+
+---
+
+### 8. Real-Time Charting & MT4/MT5 Integration Workflow
+
+- **Initial Chart Render**: Call `GET /api/v1/candles?symbol=EURUSD_otc&limit=500` to render historical candles on TradingView Lightweight Charts or custom canvas.
+- **Live Candle Updates**: Poll `GET /api/v1/live?symbol=EURUSD_otc` every 1 second (sub-millisecond RAM response) to animate the active ticking candle.
+- **MT4 / MT5 Sync**: Use standard MQL4/MQL5 `WebRequest()` to pull candle feeds into offline charts and send trade orders to `/api/v1/trade`.
 
 ---
 
